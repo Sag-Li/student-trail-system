@@ -1,9 +1,16 @@
 package model
 
-enum class CourseCategory {
-    Kotlin,
-    Android,
-    Arquitetura,
-    Testes,
-    Design
+enum class CourseCategory(
+    val description: String
+) {
+
+    Kotlin("Kotlin"),
+
+    Android("Android"),
+
+    Arquitetura("Arquitetura"),
+
+    Testes("Testes"),
+
+    Design("Design")
 }

@@ -7,7 +7,7 @@ data class Enrollment(
     var status: EnrollmentStatus = EnrollmentStatus.Ativa
 ) {
 
-    fun progressPercent(): Int {
+    fun progress(): Int {
 
         val totalCourses = trail.getCourses().size
 
