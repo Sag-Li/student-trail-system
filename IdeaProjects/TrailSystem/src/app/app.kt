@@ -73,7 +73,7 @@ class App {
         println("6. Listar trilhas")
         println("7. Adicionar curso à trilha")
         println("8. Matricular aluno em trilha")
-        println("9. Registrar progresso do aluno")
+        println("9. Menu de Progresso")
         println("10. Exibir relatórios")
         println("11. Sair")
         println()
