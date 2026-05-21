@@ -8,13 +8,10 @@ import service.TrailService
 class App {
 
     private val studentService = StudentService()
-
     private val courseService = CourseService()
-
     private val trailService = TrailService()
 
-    private val enrollments =
-        mutableListOf<Enrollment>()
+    private val enrollments = mutableListOf<Enrollment>()
 
     fun start() {
 
@@ -24,33 +21,22 @@ class App {
 
             showMenu()
 
-            option = readln().toIntOrNull() ?: 0
+            option = readInt()
 
             when (option) {
 
                 1 -> registerStudent()
-
                 2 -> listStudents()
-
                 3 -> registerCourse()
-
                 4 -> listCourses()
-
                 5 -> registerTrail()
-
                 6 -> listTrails()
-
                 7 -> addCourseToTrail()
-
                 8 -> enrollStudent()
-
                 9 -> menuProgress()
-
                 10 -> showReports()
 
-                11 -> {
-                    println("Sistema encerrado.")
-                }
+                11 -> println("Sistema encerrado.")
 
                 else -> {
                     println("Opção inválida. Tente novamente.")
@@ -81,52 +67,47 @@ class App {
         print("Informe uma opção: ")
     }
 
+    private fun readInt(): Int? {
+        return readln().toIntOrNull()
+    }
+
+    private fun readRequiredInt(message: String): Int? {
+        print(message)
+        val value = readln().toIntOrNull()
+        if (value == null) {
+            println("Valor inválido.")
+        }
+        return value
+    }
+
     private fun waitEnter() {
-
         println()
-
         print("Pressione ENTER para continuar...")
-
         readln()
     }
 
     private fun registerStudent() {
 
-        println()
-        println("===== Cadastro de Aluno =====")
+        println("\n===== Cadastro de Aluno =====")
 
-        print("Informe o ID do aluno: ")
-        val id = readln().toIntOrNull() ?: -1
+        val id = readRequiredInt("ID do aluno: ") ?: return
 
-        print("Informe o nome do aluno: ")
+        print("Nome: ")
         val name = readln()
 
-        print("Informe o e-mail do aluno: ")
+        print("E-mail: ")
         val email = readln()
 
         try {
 
-            val student = Student(
-                id,
-                name,
-                email,
-                StudentStatus.Ativo
-            )
+            val student = Student(id, name, email, StudentStatus.Ativo)
 
-            val success =
-                studentService.registerStudent(student)
+            val success = studentService.registerStudent(student)
 
-            if (success) {
-
-                println("Aluno cadastrado com sucesso.")
-
-            } else {
-
-                println("Já existe um aluno com esse ID.")
-            }
+            if (success) println("Aluno cadastrado com sucesso.")
+            else println("Já existe um aluno com esse ID.")
 
         } catch (e: IllegalArgumentException) {
-
             println("Erro: ${e.message}")
         }
 
@@ -135,20 +116,14 @@ class App {
 
     private fun listStudents() {
 
-        println()
-        println("===== Lista de Alunos =====")
+        println("\n===== Lista de Alunos =====")
 
-        val students =
-            studentService.listStudents()
+        val students = studentService.listStudents()
 
         if (students.isEmpty()) {
-
             println("Nenhum aluno cadastrado.")
-
         } else {
-
             students.forEach {
-
                 println(
                     """
 ID: ${it.id}
@@ -157,7 +132,6 @@ E-mail: ${it.email}
 Status: ${it.status}
                     """.trimIndent()
                 )
-
                 println("-------------------")
             }
         }
@@ -167,98 +141,66 @@ Status: ${it.status}
 
     private fun registerCourse() {
 
-        println()
-        println("===== Cadastro de Curso =====")
+        println("\n===== Cadastro de Curso =====")
 
-        print("Informe o ID do curso: ")
-        val id = readln().toInt()
+        val id = readRequiredInt("ID do curso: ") ?: return
 
-        print("Informe o título do curso: ")
+        print("Título: ")
         val title = readln()
 
-        print("Informe a descrição: ")
+        print("Descrição: ")
         val description = readln()
 
-        print("Informe a carga horária: ")
-        val workload = readln().toInt()
+        val workload = readRequiredInt("Carga horária: ") ?: return
 
-        println()
-        println("Categorias:")
+        println("\nCategorias:")
         println("1. KOTLIN")
         println("2. ANDROID")
         println("3. ARQUITETURA")
         println("4. TESTES")
         println("5. DESIGN")
-        print("Escolha a categoria: ")
+        print("Escolha: ")
 
-        val category =
-            when (readln().toInt()) {
+        val category = when (readln().toIntOrNull()) {
+            1 -> CourseCategory.Kotlin
+            2 -> CourseCategory.Android
+            3 -> CourseCategory.Arquitetura
+            4 -> CourseCategory.Testes
+            else -> CourseCategory.Design
+        }
 
-                1 -> CourseCategory.Kotlin
-                2 -> CourseCategory.Android
-                3 -> CourseCategory.Arquitetura
-                4 -> CourseCategory.Testes
-                else -> CourseCategory.Design
-
-            }
-
-        println()
-        println("Níveis:")
-        println("1. Basico")
+        println("\nNíveis:")
+        println("1. Básico")
         println("2. Intermediário")
         println("3. Avançado")
+        print("Escolha: ")
 
-        print("Escolha o nível: ")
-
-        val level =
-            when (readln().toInt()) {
-
-                1 -> CourseLevel.Básico
-
-                2 -> CourseLevel.Intermediário
-
-                else -> CourseLevel.Avançado
-            }
-
-        val course = Course(
-            id,
-            title,
-            workload,
-            level,
-            category
-        )
-
-        val success =
-            courseService.registerCourse(course)
-
-        if (success) {
-
-            println("Curso cadastrado com sucesso.")
-
-        } else {
-
-            println("Já existe um curso com esse ID.")
+        val level = when (readln().toIntOrNull()) {
+            1 -> CourseLevel.Básico
+            2 -> CourseLevel.Intermediário
+            else -> CourseLevel.Avançado
         }
+
+        val course = Course(id, title, workload, level, category)
+
+        val success = courseService.registerCourse(course)
+
+        if (success) println("Curso cadastrado com sucesso.")
+        else println("Já existe um curso com esse ID.")
 
         waitEnter()
     }
 
     private fun listCourses() {
 
-        println()
-        println("===== Lista de Cursos =====")
+        println("\n===== Lista de Cursos =====")
 
-        val courses =
-            courseService.listCourses()
+        val courses = courseService.listCourses()
 
         if (courses.isEmpty()) {
-
             println("Nenhum curso cadastrado.")
-
         } else {
-
             courses.forEach {
-
                 println(
                     """
 ID: ${it.id}
@@ -268,7 +210,6 @@ Categoria: ${it.category}
 Nível: ${it.level}
                     """.trimIndent()
                 )
-
                 println("-------------------")
             }
         }
@@ -278,56 +219,36 @@ Nível: ${it.level}
 
     private fun registerTrail() {
 
-        println()
-        println("===== Cadastro de Trilha =====")
+        println("\n===== Cadastro de Trilha =====")
 
-        print("Informe o ID da trilha: ")
-        val id = readln().toInt()
+        val id = readRequiredInt("ID da trilha: ") ?: return
 
-        print("Informe o nome da trilha: ")
+        print("Nome: ")
         val name = readln()
 
-        print("Informe a descrição: ")
+        print("Descrição: ")
         val description = readln()
 
-        val trail = Trail(
-            id,
-            name,
-            description,
-            TrailStatus.Ativa
-        )
+        val trail = Trail(id, name, description, TrailStatus.Ativa)
 
-        val success =
-            trailService.registerTrail(trail)
+        val success = trailService.registerTrail(trail)
 
-        if (success) {
-
-            println("Trilha cadastrada com sucesso.")
-
-        } else {
-
-            println("Já existe uma trilha com esse ID.")
-        }
+        if (success) println("Trilha cadastrada com sucesso.")
+        else println("Já existe uma trilha com esse ID.")
 
         waitEnter()
     }
 
     private fun listTrails() {
 
-        println()
-        println("===== Lista de Trilhas =====")
+        println("\n===== Lista de Trilhas =====")
 
-        val trails =
-            trailService.listTrails()
+        val trails = trailService.listTrails()
 
         if (trails.isEmpty()) {
-
             println("Nenhuma trilha cadastrada.")
-
         } else {
-
             trails.forEach {
-
                 println(
                     """
 ID: ${it.id}
@@ -337,7 +258,6 @@ Status: ${it.status}
 Carga Horária Total: ${it.totalWorkload()}h
                     """.trimIndent()
                 )
-
                 println("-------------------")
             }
         }
@@ -347,36 +267,20 @@ Carga Horária Total: ${it.totalWorkload()}h
 
     private fun addCourseToTrail() {
 
-        println()
-        println("===== Adicionar Curso à Trilha =====")
+        println("\n===== Adicionar Curso à Trilha =====")
 
-        print("Informe o ID da trilha: ")
-        val trailId = readln().toInt()
+        val trailId = readRequiredInt("ID da trilha: ") ?: return
+        val courseId = readRequiredInt("ID do curso: ") ?: return
 
-        print("Informe o ID do curso: ")
-        val courseId = readln().toInt()
-
-        val trail =
-            trailService.findTrailById(trailId)
-
-        val course =
-            courseService.findCourseById(courseId)
+        val trail = trailService.findTrailById(trailId)
+        val course = courseService.findCourseById(courseId)
 
         if (trail == null || course == null) {
-
             println("Trilha ou curso não encontrado.")
-
         } else {
-
-            val success =
-                trail.addCourse(course)
-
-            if (success) {
-
+            if (trail.addCourse(course)) {
                 println("Curso adicionado à trilha.")
-
             } else {
-
                 println("Não foi possível adicionar o curso.")
             }
         }
@@ -386,36 +290,18 @@ Carga Horária Total: ${it.totalWorkload()}h
 
     private fun enrollStudent() {
 
-        println()
-        println("===== Matrícula em Trilha =====")
+        println("\n===== Matrícula em Trilha =====")
 
-        print("Informe o ID do aluno: ")
-        val studentId = readln().toIntOrNull()
+        val studentId = readRequiredInt("ID do aluno: ") ?: return
+        val trailId = readRequiredInt("ID da trilha: ") ?: return
 
-        print("Informe o ID da trilha: ")
-        val trailId = readln().toIntOrNull()
-
-        val student =
-            studentService.findStudentById(studentId)
-
-        val trail =
-            trailService.findTrailById(trailId)
+        val student = studentService.findStudentById(studentId)
+        val trail = trailService.findTrailById(trailId)
 
         if (student == null || trail == null) {
-
             println("Aluno ou trilha não encontrado.")
-
         } else {
-
-            val enrollment = Enrollment(
-                student,
-                trail,
-                0,
-                EnrollmentStatus.Ativa
-            )
-
-            enrollments.add(enrollment)
-
+            enrollments.add(Enrollment(student, trail, 0, EnrollmentStatus.Ativa))
             println("Aluno matriculado com sucesso.")
         }
 
@@ -428,27 +314,19 @@ Carga Horária Total: ${it.totalWorkload()}h
 
         do {
 
-            println()
-            println("===== Gerenciamento de Progresso =====")
-            println("1. Ver progresso dos alunos")
+            println("\n===== Gerenciamento de Progresso =====")
+            println("1. Ver progresso")
             println("2. Atualizar progresso")
-            println("3. Voltar ao menu principal")
-            println()
+            println("3. Voltar")
+            print("Escolha: ")
 
-            print("Escolha uma opção: ")
-
-            option =
-                readln().toIntOrNull() ?: 0
+            option = readln().toIntOrNull()
 
             when (option) {
 
                 1 -> showProgress()
-
                 2 -> registerProgress()
-
-                3 -> {
-                    println("Voltando ao menu principal...")
-                }
+                3 -> println("Voltando...")
 
                 else -> {
                     println("Opção inválida.")
@@ -461,27 +339,21 @@ Carga Horária Total: ${it.totalWorkload()}h
 
     private fun showProgress() {
 
-        println()
-        println("===== Progresso dos Alunos =====")
+        println("\n===== Progresso dos Alunos =====")
 
         if (enrollments.isEmpty()) {
-
             println("Nenhuma matrícula cadastrada.")
-
         } else {
-
             enrollments.forEach {
-
                 println(
                     """
 Aluno: ${it.student.name}
 Trilha: ${it.trail.name}
-Cursos concluídos: ${it.completedCourses}
+Concluídos: ${it.completedCourses}
 Progresso: ${it.progress()}%
 Status: ${it.status}
-                """.trimIndent()
+                    """.trimIndent()
                 )
-
                 println("-------------------")
             }
         }
@@ -491,54 +363,24 @@ Status: ${it.status}
 
     private fun registerProgress() {
 
-        println()
-        println("===== Atualização de Progresso =====")
+        println("\n===== Atualização de Progresso =====")
 
-        print("Informe o ID do aluno: ")
+        val studentId = readRequiredInt("ID do aluno: ") ?: return
 
-        val studentId =
-            readln().toIntOrNull() ?: 0
-
-        val enrollment =
-            enrollments.find {
-                it.student.id == studentId
-            }
+        val enrollment = enrollments.find { it.student.id == studentId }
 
         if (enrollment == null) {
-
             println("Matrícula não encontrada.")
-
         } else {
 
-            println()
+            val total = enrollment.trail.getCourses().size
+            println("Total de cursos: $total")
 
-            println(
-                "Total de cursos da trilha: ${
-                    enrollment
-                        .trail
-                        .getCourses()
-                        .size
-                }"
-            )
+            val completed = readRequiredInt("Cursos concluídos: ") ?: return
 
-            print(
-                "Informe quantos cursos o aluno concluiu: "
-            )
+            enrollment.completedCourses = completed
 
-            val completedCourses =
-                readln().toIntOrNull() ?: 0
-
-            enrollment.completedCourses =
-                completedCourses
-
-            println()
-            println("Progresso atualizado com sucesso.")
-
-            println(
-                "Progresso atual: ${
-                    enrollment.progress()
-                }%"
-            )
+            println("Progresso atualizado: ${enrollment.progress()}%")
         }
 
         waitEnter()
@@ -546,38 +388,12 @@ Status: ${it.status}
 
     private fun showReports() {
 
-        println()
-        println("===== Relatórios =====")
+        println("\n===== Relatórios =====")
 
-        println(
-            "Total de alunos: ${
-                studentService
-                    .listStudents()
-                    .size
-            }"
-        )
-
-        println(
-            "Total de cursos: ${
-                courseService
-                    .listCourses()
-                    .size
-            }"
-        )
-
-        println(
-            "Total de trilhas: ${
-                trailService
-                    .listTrails()
-                    .size
-            }"
-        )
-
-        println(
-            "Total de matrículas: ${
-                enrollments.size
-            }"
-        )
+        println("Total de alunos: ${studentService.listStudents().size}")
+        println("Total de cursos: ${courseService.listCourses().size}")
+        println("Total de trilhas: ${trailService.listTrails().size}")
+        println("Total de matrículas: ${enrollments.size}")
 
         waitEnter()
     }
