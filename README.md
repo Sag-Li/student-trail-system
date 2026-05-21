@@ -1,4 +1,4 @@
-<h1 align="center">📚 Sistema de Alunos e Trilhas</h1>
+<h1 align="center"> Sistema de Alunos e Trilhas</h1>
 
 <p align="center">
 <strong>Sistema de gerenciamento de alunos, cursos e trilhas de aprendizado desenvolvido em Kotlin via console.</strong>
