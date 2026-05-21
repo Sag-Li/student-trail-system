@@ -24,7 +24,7 @@ class App {
 
             showMenu()
 
-            option = readln().toIntOrNull()
+            option = readln().toIntOrNull() ?: 0
 
             when (option) {
 
@@ -390,10 +390,10 @@ Carga Horária Total: ${it.totalWorkload()}h
         println("===== Matrícula em Trilha =====")
 
         print("Informe o ID do aluno: ")
-        val studentId = readln().toInt()
+        val studentId = readln().toIntOrNull()
 
         print("Informe o ID da trilha: ")
-        val trailId = readln().toInt()
+        val trailId = readln().toIntOrNull()
 
         val student =
             studentService.findStudentById(studentId)
