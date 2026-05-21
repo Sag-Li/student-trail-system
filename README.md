@@ -82,9 +82,3 @@ O sistema garante maior integridade dos dados através das seguintes validaçõe
 - Controle de status das entidades
 
 ---
-
-2. Abra o projeto no IntelliJ IDEA.
-
-3. Execute o arquivo `Main.kt`.
-
-4. Utilize o menu interativo exibido no console.
