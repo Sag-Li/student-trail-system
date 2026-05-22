@@ -153,6 +153,12 @@ Status: ${it.status}
 
         val workload = readRequiredInt("Carga horária: ") ?: return
 
+        if (workload <= 0) {
+            println("Carga horária inválida.")
+            waitEnter()
+            return
+        }
+
         println("\nCategorias:")
         println("1. KOTLIN")
         println("2. ANDROID")
@@ -166,32 +172,52 @@ Status: ${it.status}
             2 -> CourseCategory.Android
             3 -> CourseCategory.Arquitetura
             4 -> CourseCategory.Testes
-            else -> CourseCategory.Design
+            5 -> CourseCategory.Design
+            else -> {
+                println("Categoria inválida.")
+                waitEnter()
+                return
+            }
         }
 
         println("\nNíveis:")
         println("1. Básico")
         println("2. Intermediário")
         println("3. Avançado")
-        print("Escolha: ")
+        print("Escolha o nível: ")
 
         val level = when (readln().toIntOrNull()) {
             1 -> CourseLevel.Básico
             2 -> CourseLevel.Intermediário
-            else -> CourseLevel.Avançado
+            3 -> CourseLevel.Avançado
+            else -> {
+                println("Nível inválido.")
+                waitEnter()
+                return
+            }
         }
 
-        val course = Course(id, title, workload, level, category)
+        val course = Course(
+            id,
+            title,
+            description,
+            workload,
+            level,
+            category
+        )
 
         val success = courseService.registerCourse(course)
 
-        if (success) println("Curso cadastrado com sucesso.")
-        else println("Já existe um curso com esse ID.")
+        if (success) {
+            println("Curso cadastrado com sucesso.")
+        } else {
+            println("Já existe um curso com esse ID.")
+        }
 
         waitEnter()
     }
 
-    private fun listCourses() {
+        private fun listCourses() {
 
         println("\n===== Lista de Cursos =====")
 
@@ -205,6 +231,7 @@ Status: ${it.status}
                     """
 ID: ${it.id}
 Título: ${it.title}
+Descrição: ${it.description}
 Carga Horária: ${it.workload}h
 Categoria: ${it.category}
 Nível: ${it.level}
@@ -229,12 +256,20 @@ Nível: ${it.level}
         print("Descrição: ")
         val description = readln()
 
-        val trail = Trail(id, name, description, TrailStatus.Ativa)
+        val trail = Trail(
+            id,
+            name,
+            description,
+            TrailStatus.Ativa
+        )
 
         val success = trailService.registerTrail(trail)
 
-        if (success) println("Trilha cadastrada com sucesso.")
-        else println("Já existe uma trilha com esse ID.")
+        if (success) {
+            println("Trilha cadastrada com sucesso.")
+        } else {
+            println("Já existe uma trilha com esse ID.")
+        }
 
         waitEnter()
     }
@@ -276,8 +311,11 @@ Carga Horária Total: ${it.totalWorkload()}h
         val course = courseService.findCourseById(courseId)
 
         if (trail == null || course == null) {
+
             println("Trilha ou curso não encontrado.")
+
         } else {
+
             if (trail.addCourse(course)) {
                 println("Curso adicionado à trilha.")
             } else {
@@ -299,9 +337,20 @@ Carga Horária Total: ${it.totalWorkload()}h
         val trail = trailService.findTrailById(trailId)
 
         if (student == null || trail == null) {
+
             println("Aluno ou trilha não encontrado.")
+
         } else {
-            enrollments.add(Enrollment(student, trail, 0, EnrollmentStatus.Ativa))
+
+            enrollments.add(
+                Enrollment(
+                    student,
+                    trail,
+                    0,
+                    EnrollmentStatus.Ativa
+                )
+            )
+
             println("Aluno matriculado com sucesso.")
         }
 
@@ -379,6 +428,42 @@ Status: ${it.status}
             val completed = readRequiredInt("Cursos concluídos: ") ?: return
 
             enrollment.completedCourses = completed
+
+            val completedCourses =
+                readln().toIntOrNull()
+
+            if (completedCourses == null) {
+                println("Quantidade inválida.")
+                waitEnter()
+                return
+            }
+
+            val totalCourses =
+                enrollment.trail.getCourses().size
+
+            if (completedCourses < 0) {
+                println("Quantidade inválida.")
+                waitEnter()
+                return
+            }
+
+            if (completedCourses > totalCourses) {
+                println("A quantidade não pode ser maior que o total de cursos da trilha.")
+                waitEnter()
+                return
+            }
+
+            enrollment.completedCourses =
+                completedCourses
+
+            println()
+            println("Progresso atualizado com sucesso.")
+
+            println(
+                "Progresso atual: ${
+                    enrollment.progress()
+                }%"
+            )
 
             println("Progresso atualizado: ${enrollment.progress()}%")
         }
